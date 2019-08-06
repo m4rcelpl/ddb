@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/core/runtime-deps:3.0-alpine3.9 AS base 
+RUN apk add --no-cache --update 'mariadb-client>10.3.15' && \
+    rm -rf /var/cache/apk/* 
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine3.9 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet publish "ddb.csproj" -r linux-musl-x64 -c Release -o /app /p:PublishTrimmed=true --self-contained
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app .
+ENTRYPOINT ["./ddb"]
