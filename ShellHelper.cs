@@ -6,6 +6,7 @@ using System.Text;
 namespace ddb
 {
     /// <summary>
+    /// reference
     /// https://loune.net/2017/06/running-shell-bash-commands-in-net-core/
     /// </summary>
     public static class ShellHelper
@@ -18,7 +19,7 @@ namespace ddb
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "/bin/bash",
+                    FileName = "/bin/sh",
                     Arguments = $"-c \"{escapedArgs}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
