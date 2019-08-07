@@ -26,8 +26,11 @@ namespace ddb
             }
             else
             {
+                Console.WriteLine("Start making backup....");
                 //Console.WriteLine(@"mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} \${MYSQL_DB}".Bash());
-                Console.WriteLine(@"mysqldump -hdatabase.platnicyvat.pl -P3445 -uroot -pjrmgqj2xf1e24tgx -r/app/dmp.sql ${EXTRA_OPTS} \--all-databases".Bash());
+                Console.WriteLine(@"mysqldump -hdatabase.platnicyvat.pl -P3445 -uroot -pjrmgqj2xf1e24tgx ${EXTRA_OPTS} \--all-databases | gzip -9 -c > /app/backup/dmp.sql.gz".Bash());
+
+                Console.WriteLine("Done file is save.");
 
             }
 
