@@ -2,6 +2,7 @@
 **/.env
 **/.git
 **/.gitignore
+**/.gitattributes
 **/.vs
 **/.vscode
 **/*.*proj.user
@@ -9,12 +10,17 @@
 **/charts
 **/bin
 **/obj
+**/Properties
+**/LICENSE
 **/Dockerfile
+**/Dockerfile*
 **/Dockerfile.develop
 **/docker-compose.yml
 **/docker-compose.*.yml
 **/*.dbmdl
 **/*.jfm
+**/*.md
+**/*.sln
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/.toolstarget
