@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
@@ -11,22 +10,20 @@ namespace ddb
     /// </summary>
     public static class ShellHelper
     {
-        public static string Bash(this string cmd)
+        public static string Bash(this StringBuilder cmd)
         {
-            var escapedArgs = cmd.Replace("\"", "\\\"");
-
             try
             {
                 using Process process = new Process()
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = "/bin/shd",
-                        Arguments = $"-c \"{escapedArgs}\"",
+                        FileName = "/bin/sh",
+                        Arguments = $"-c \"{cmd.Replace("\"", "\\\"")}\"",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
-                        CreateNoWindow = true,
+                        CreateNoWindow = true
                     }
                 };
                 process.Start();
