@@ -14,31 +14,43 @@ namespace ddb
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("All environment variables:");
-            foreach (DictionaryEntry item in Environment.GetEnvironmentVariables())
+            EVariables eVariables = new EVariables();
+            string filename = DateTime.Now.ToString("ddMMyyyy_HHmmss");
+
+            Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: {eVariables.MYSQL_PASSWORD}{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}");
+
+            Int32.TryParse(eVariables.DB_DUMP_FREQ, out int DB_DUMP_FREQ);
+
+
+            try
             {
-                Console.WriteLine($"{item.Key} | {item.Value}");
+                if ("mysqldump".Bash().Contains("command not found"))
+                {
+                    Console.WriteLine("There is no mysqldump in system");
+                    Environment.Exit(-1);
+                }
             }
-
-            if ("mysqldump".Bash().Contains("command not found"))
+            catch (System.Exception ex)
             {
-                Console.WriteLine("There is no mysqldump in system");
+                Console.WriteLine($"Error while searching for mysqldump: {ex.Message} | {ex.InnerException?.Message}");
+                Environment.Exit(-1);
             }
-            else
-            {
-                Console.WriteLine("Start making backup....");
-                //Console.WriteLine(@"mysqldump -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASS} ${EXTRA_OPTS} \${MYSQL_DB}".Bash());
-                Console.WriteLine(@"mysqldump -hdatabase.platnicyvat.pl -P3445 -uroot -pjrmgqj2xf1e24tgx ${EXTRA_OPTS} \--all-databases | gzip -9 -c > /app/backup/dmp.sql.gz".Bash());
-
-                Console.WriteLine("Done file is save.");
-
-            }
-
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                
-                await Task.Delay(5000, stoppingToken);
+                await Task.Delay(DB_DUMP_FREQ * 1000, stoppingToken);
+
+                try
+                {
+                    Console.WriteLine("Start making backup....");
+                    Console.WriteLine($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --all-databases | gzip -9 -c > /app/backup/{filename}.sql.gz".Bash());
+                    Console.WriteLine($"Done file: {filename} is save");
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine($"Error while making backup: {ex.Message} | {ex.InnerException?.Message}");
+                }
+
             }
         }
     }

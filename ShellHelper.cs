@@ -15,26 +15,31 @@ namespace ddb
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
 
-            using Process process = new Process()
+            try
             {
-                StartInfo = new ProcessStartInfo
+                using Process process = new Process()
                 {
-                    FileName = "/bin/sh",
-                    Arguments = $"-c \"{escapedArgs}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                }
-            };
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "/bin/shd",
+                        Arguments = $"-c \"{escapedArgs}\"",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+                process.Start();
+                string standardOutput = process.StandardOutput.ReadToEnd();
+                string standardError = process.StandardError.ReadToEnd();
+                process.WaitForExit();
 
-            process.Start();
-            string standardOutput = process.StandardOutput.ReadToEnd();
-            string standardError = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-
-            return String.IsNullOrEmpty(standardOutput) ? standardError : standardOutput;
-
+                return String.IsNullOrEmpty(standardOutput) ? standardError : standardOutput;
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
     }
 }
