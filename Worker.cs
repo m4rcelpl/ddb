@@ -15,6 +15,8 @@ namespace ddb
             StringBuilder filename = new StringBuilder();
             StringBuilder command = new StringBuilder();
 
+            Console.WriteLine($"🐳 Docker Database Backup is now starting!");
+
             Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}");
 
             Int32.TryParse(eVariables.DB_DUMP_FREQ, out int DB_DUMP_FREQ);
