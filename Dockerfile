@@ -1,20 +1,35 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-alpine3.9 AS base
+FROM alpine:3.10 AS base 
+RUN apk add --no-cache --update 'mariadb-client>10.3.17'
+RUN apk add --no-cache \
+    ca-certificates \
+    \
+    # .NET Core dependencies
+    krb5-libs \
+    libgcc \
+    libintl \
+    libssl1.1 \
+    libstdc++ \
+    lttng-ust \
+    tzdata \
+    userspace-rcu \
+    zlib
+
+ENV ASPNETCORE_URLS=http://+:80 \
+    # Enable detection of running in a container
+    DOTNET_RUNNING_IN_CONTAINER=true \
+    # Set the invariant mode since icu_libs isn't included (see https://github.com/dotnet/announcements/issues/20)
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
+
 WORKDIR /app
-RUN apk add --update 'mariadb-client' && \
-    rm -rf /var/cache/apk/*
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine3.9 AS build
 WORKDIR /src
-COPY ["ddb.csproj", ""]
-RUN dotnet restore "./ddb.csproj"
 COPY . .
-WORKDIR /src
-RUN dotnet build "ddb.csproj" -c Release -o /app
-
-FROM build AS publish
-RUN dotnet publish "ddb.csproj" -c Release -o /app
+RUN dotnet publish "ddb.csproj" -r linux-musl-x64 -c Release -o /app --self-contained true
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "ddb.dll"]
+COPY --from=build /app .
+RUN mkdir /app/backup
+VOLUME ["/app/backup"]
+ENTRYPOINT ["./ddb"]
