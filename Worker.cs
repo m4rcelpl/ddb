@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,7 +53,16 @@ namespace ddb
                 {
                     Console.WriteLine("[INFO] 🐱‍👤 Start making backup...");
                     Console.WriteLine(command.Bash());
-                    Console.WriteLine($"[INFO] 💾 Files is save as: {filename}.sql.gz");
+                    if (File.Exists($"/app/backup/{filename}.sql.gz"))
+                    {
+                        Console.WriteLine($"[INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[ERROR] 🤔 Something went wrong. File not found.");
+                    }
+
+
                 }
                 catch (Exception ex)
                 {
