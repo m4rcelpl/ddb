@@ -13,13 +13,9 @@ RUN apk add --no-cache \
     tzdata \
     userspace-rcu \
     zlib
-
 ENV ASPNETCORE_URLS=http://+:80 \
-    # Enable detection of running in a container
     DOTNET_RUNNING_IN_CONTAINER=true \
-    # Set the invariant mode since icu_libs isn't included (see https://github.com/dotnet/announcements/issues/20)
     DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
-
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine3.9 AS build
