@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -14,7 +15,7 @@ namespace ddb
             Console.WriteLine("🐳 Docker Database Backup is now starting!");
             Console.WriteLine($"[INFO] Your container current Date time is: {DateTime.Now}");
 
-
+            Stopwatch stopwatch = new Stopwatch();
             EVariables eVariables = new EVariables();
             StringBuilder filename = new StringBuilder();
             StringBuilder command = new StringBuilder();
@@ -35,6 +36,7 @@ namespace ddb
                     DB_DUMP_BEGIN_MINUTE = -1;
 
                 firstRunDelay = HelperClass.GetMilisecund(DB_DUMP_BEGIN_HOUR, DB_DUMP_BEGIN_MINUTE);
+                Console.WriteLine("Uruchomi się za " + firstRunDelay);//-1
             }
 
             Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}");
@@ -66,10 +68,19 @@ namespace ddb
                 }
                 else
                 {
-                    Console.WriteLine($"[INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(DB_DUMP_FREQ * 60000)}");
-                    await Task.Delay(DB_DUMP_FREQ * 60000, stoppingToken);//TODO 
+                    int nextStartMilliseconds = (DB_DUMP_FREQ * 60000) - Convert.ToInt32(stopwatch.ElapsedMilliseconds);
+
+                    if (nextStartMilliseconds < 0)
+                    {
+                        nextStartMilliseconds = 0;
+                        Console.WriteLine("[WARNING] ⌛ Your backup has been taking longer than the set value of DB_DUMP_FREQ. Next will be executed immediately");
+                    }
+
+                    Console.WriteLine($"[INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(nextStartMilliseconds)}");
+                    await Task.Delay(nextStartMilliseconds, stoppingToken);
                 }
 
+                stopwatch.Restart();
                 filename.Clear();
                 filename.Append(DateTime.Now.ToString("ddMMyyyy_HHmmss"));
                 command.Clear();
@@ -79,9 +90,10 @@ namespace ddb
                 {
                     Console.WriteLine("[INFO] 🐱‍👤 Start making backup...");
                     Console.WriteLine(command.Bash());
+                    stopwatch.Stop();
                     if (File.Exists($"/app/backup/{filename}.sql.gz"))
                     {
-                        Console.WriteLine($"[INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz");
+                        Console.WriteLine($"[INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz ({stopwatch.Elapsed.Seconds}sec)");
                     }
                     else
                     {
@@ -91,8 +103,9 @@ namespace ddb
                 catch (Exception ex)
                 {
                     Console.WriteLine($"[ERROR] 🤔 While making backup: {ex.Message} | {ex.InnerException?.Message}");
-                }
+                    stopwatch.Stop();
 
+                }
             }
         }
     }
