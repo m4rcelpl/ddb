@@ -11,17 +11,33 @@ namespace ddb
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            Console.WriteLine("🐳 Docker Database Backup is now starting!");
+            Console.WriteLine($"[INFO] Your container current Date time is: {DateTime.Now}");
+
+
             EVariables eVariables = new EVariables();
             StringBuilder filename = new StringBuilder();
             StringBuilder command = new StringBuilder();
-
-            Console.WriteLine($"🐳 Docker Database Backup is now starting!");
-
-            Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}");
+            int firstRunDelay = -1;
 
             Int32.TryParse(eVariables.DB_DUMP_FREQ, out int DB_DUMP_FREQ);
             if (DB_DUMP_FREQ <= 0)
                 DB_DUMP_FREQ = 1;
+
+            if (eVariables.DB_DUMP_BEGIN.Length == 4)
+            {
+                Int32.TryParse(eVariables.DB_DUMP_BEGIN.Substring(0, 2), out int DB_DUMP_BEGIN_HOUR);
+                if (DB_DUMP_BEGIN_HOUR < 0 || DB_DUMP_BEGIN_HOUR > 23)
+                    DB_DUMP_BEGIN_HOUR = -1;
+
+                Int32.TryParse(eVariables.DB_DUMP_BEGIN.Substring(2), out int DB_DUMP_BEGIN_MINUTE);
+                if (DB_DUMP_BEGIN_MINUTE < 0 || DB_DUMP_BEGIN_MINUTE > 59)
+                    DB_DUMP_BEGIN_MINUTE = -1;
+
+                firstRunDelay = HelperClass.GetMilisecund(DB_DUMP_BEGIN_HOUR, DB_DUMP_BEGIN_MINUTE);
+            }
+
+            Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}");
 
             command.Append("mysqldump");
             try
@@ -42,9 +58,17 @@ namespace ddb
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                Console.WriteLine($"[INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(DB_DUMP_FREQ * 60000)}");
-
-                await Task.Delay(DB_DUMP_FREQ * 60000, stoppingToken);
+                if (firstRunDelay > 0)
+                {
+                    Console.WriteLine($"[INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(firstRunDelay)}");
+                    await Task.Delay(firstRunDelay, stoppingToken);
+                    firstRunDelay = -1;
+                }
+                else
+                {
+                    Console.WriteLine($"[INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(DB_DUMP_FREQ * 60000)}");
+                    await Task.Delay(DB_DUMP_FREQ * 60000, stoppingToken);//TODO 
+                }
 
                 filename.Clear();
                 filename.Append(DateTime.Now.ToString("ddMMyyyy_HHmmss"));
@@ -63,8 +87,6 @@ namespace ddb
                     {
                         Console.WriteLine($"[ERROR] 🤔 Something went wrong. File not found.");
                     }
-
-
                 }
                 catch (Exception ex)
                 {
