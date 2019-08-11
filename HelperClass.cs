@@ -41,7 +41,7 @@ namespace ddb
         public static int GetMilisecund(int hour, int minute)
         {
             DateTime firstStart = DateTime.Today.AddHours(hour).AddMinutes(minute);
-            if (hour < DateTime.Now.Hour)
+            if (hour < DateTime.Now.Hour || hour == DateTime.Now.Hour && minute < DateTime.Now.Minute)
             {
                 firstStart = firstStart.AddDays(1);
             }
