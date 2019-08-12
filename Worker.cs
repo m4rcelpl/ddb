@@ -36,7 +36,7 @@ namespace ddb
                     DB_DUMP_BEGIN_MINUTE = -1;
 
                 firstRunDelay = HelperClass.GetMilisecund(DB_DUMP_BEGIN_HOUR, DB_DUMP_BEGIN_MINUTE);
-                Console.WriteLine("Uruchomi się za " + firstRunDelay);//-1
+                Console.WriteLine("Uruchomi się za " + firstRunDelay);
             }
 
             Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}");
@@ -84,7 +84,7 @@ namespace ddb
                 filename.Clear();
                 filename.Append(DateTime.Now.ToString("ddMMyyyy_HHmmss"));
                 command.Clear();
-                command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --all-databases | gzip -9 -c > /app/backup/{filename}.sql.gz");
+                command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --skip-lock-tables --all-databases | gzip -9 -c > /app/backup/{filename}.sql.gz");
 
                 try
                 {
@@ -93,7 +93,7 @@ namespace ddb
                     stopwatch.Stop();
                     if (File.Exists($"/app/backup/{filename}.sql.gz"))
                     {
-                        Console.WriteLine($"[INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz ({stopwatch.Elapsed.Seconds}sec)");
+                        Console.WriteLine($"[INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz ({stopwatch.Elapsed.ToString("hh\\:mm\\:ss")})");
                     }
                     else
                     {
