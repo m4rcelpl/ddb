@@ -14,12 +14,14 @@ namespace ddb
             MYSQL_PASSWORD = Environment.GetEnvironmentVariable("MYSQL_PASSWORD");
             DB_DUMP_FREQ = Environment.GetEnvironmentVariable("DB_DUMP_FREQ");
             DB_DUMP_BEGIN = Environment.GetEnvironmentVariable("DB_DUMP_BEGIN");
+            MYSQL_DB_NAMES = Environment.GetEnvironmentVariable("MYSQL_DB_NAMES");
         }
 
         public string MYSQL_ADRESS { get; set; }
         public string MYSQL_PORT { get; set; }
         public string MYSQL_USERNAME { get; set; }
         public string MYSQL_PASSWORD { get; set; }
+        public string MYSQL_DB_NAMES { get; set; }
         public string DB_DUMP_FREQ { get; set; }
         public string DB_DUMP_BEGIN { get; set; }
     }

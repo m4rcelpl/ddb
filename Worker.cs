@@ -39,7 +39,7 @@ namespace ddb
                 Console.WriteLine("Uruchomi się za " + firstRunDelay);
             }
 
-            Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}");
+            Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}{Environment.NewLine}MYSQL_DB_NAMES: {eVariables.MYSQL_DB_NAMES}");
 
             command.Append("mysqldump");
             try
@@ -84,7 +84,11 @@ namespace ddb
                 filename.Clear();
                 filename.Append(DateTime.Now.ToString("ddMMyyyy_HHmmss"));
                 command.Clear();
-                command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --skip-lock-tables --all-databases | gzip -9 -c > /app/backup/{filename}.sql.gz");
+
+                if (string.IsNullOrEmpty(eVariables.MYSQL_DB_NAMES))
+                    command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --skip-lock-tables --all-databases | gzip -9 -c > /app/backup/{filename}.sql.gz");
+                else
+                    command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --skip-lock-tables --databases {eVariables.MYSQL_DB_NAMES} | gzip -9 -c > /app/backup/{filename}.sql.gz");
 
                 try
                 {
