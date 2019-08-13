@@ -21,7 +21,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine3.9 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet publish "ddb.csproj" -r linux-musl-x64 -c Release -o /app --self-contained true
+RUN dotnet publish "ddb.csproj" -r linux-musl-x64 -c Release -o /app --self-contained true /p:PublishTrimmed=true
 
 FROM base AS final
 WORKDIR /app
