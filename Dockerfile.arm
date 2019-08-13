@@ -1,5 +1,12 @@
 FROM mcr.microsoft.com/dotnet/core/runtime:3.0.0-preview7-buster-slim-arm64v8 AS base 
-RUN apk add --no-cache --update 'mariadb-client>10.3.17'
+RUN apt-get update && \
+    apt-get -y dist-upgrade && \
+    apt-get -y autoremove && \
+    apt-get clean && \
+    apt-get install -y \
+    mariadb-client \
+    bzip2
+
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview7-buster-arm64v8 AS build
