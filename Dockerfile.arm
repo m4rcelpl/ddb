@@ -1,20 +1,19 @@
-FROM mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim-arm32v7 AS base 
+FROM mcr.microsoft.com/dotnet/core/runtime-deps:3.0-disco-arm32v7 AS base 
 RUN apt-get update \
-    && apt-get upgrade \
+    && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends \
     mariadb-client \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster-arm32v7 AS build
-RUN git clone https://github.com/m4rcelpl/ddb.git /src
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-disco-arm32v7 AS build
+#RUN git clone https://github.com/m4rcelpl/ddb.git /src
 WORKDIR /src
-RUN dotnet publish "ddb.csproj" -c Release -o /app --self-contained false
+COPY . .
+RUN dotnet publish "ddb.csproj" -r linux-arm -c Release -o /app --self-contained true /p:PublishTrimmed=true
 
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app .
 RUN mkdir /app/backup
 VOLUME ["/app/backup"]
-ENTRYPOINT ["dotnet", "ddb.dll"]
+ENTRYPOINT ["./ddb"]
