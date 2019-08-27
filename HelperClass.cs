@@ -18,7 +18,7 @@ namespace ddb
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = "/bin/sh",
+                        FileName = "/bin/bash",
                         Arguments = $"-c \"{cmd.Replace("\"", "\\\"")}\"",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
