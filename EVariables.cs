@@ -8,10 +8,10 @@ namespace ddb
         {
 
             MYSQL_ADRESS = Environment.GetEnvironmentVariable("MYSQL_ADRESS") ?? "";
-            MYSQL_PORT = Environment.GetEnvironmentVariable("MYSQL_PORT") ?? "";
+            MYSQL_PORT = Environment.GetEnvironmentVariable("MYSQL_PORT") ?? "3306";
             MYSQL_USERNAME = Environment.GetEnvironmentVariable("MYSQL_USERNAME") ?? "";
             MYSQL_PASSWORD = Environment.GetEnvironmentVariable("MYSQL_PASSWORD") ?? "";
-            DB_DUMP_FREQ = Environment.GetEnvironmentVariable("DB_DUMP_FREQ") ?? "";
+            DB_DUMP_FREQ = Environment.GetEnvironmentVariable("DB_DUMP_FREQ") ?? "1440";
             DB_DUMP_BEGIN = Environment.GetEnvironmentVariable("DB_DUMP_BEGIN") ?? "";
             MYSQL_DB_NAMES = Environment.GetEnvironmentVariable("MYSQL_DB_NAMES") ?? "";
         }
