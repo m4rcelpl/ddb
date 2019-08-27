@@ -13,7 +13,6 @@ namespace ddb
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("🐳 Docker Database Backup is now starting!");
-            Console.WriteLine($"[INFO] Your container current Date time is: {DateTime.Now}");
 
             Stopwatch stopwatch = new Stopwatch();
             EVariables eVariables = new EVariables();
@@ -36,7 +35,6 @@ namespace ddb
                     DB_DUMP_BEGIN_MINUTE = -1;
 
                 firstRunDelay = HelperClass.GetMilisecund(DB_DUMP_BEGIN_HOUR, DB_DUMP_BEGIN_MINUTE);
-                Console.WriteLine("Uruchomi się za " + firstRunDelay);
             }
 
             Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}{Environment.NewLine}MYSQL_DB_NAMES: {eVariables.MYSQL_DB_NAMES}");
@@ -49,14 +47,13 @@ namespace ddb
                     Console.WriteLine("[ERROR] 🤔 There is no mysqldump in system");
                     return;
                 }
-
-                Console.WriteLine("[INFO] 😊 Mysqldump... Found");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[ERROR] 🤔 While searching for mysqldump: {ex.Message} | {ex.InnerException?.Message}");
                 return;
             }
+            Console.WriteLine($"[INFO] Your container current Date time is: {DateTime.Now}");
 
             while (!stoppingToken.IsCancellationRequested)
             {
