@@ -12,7 +12,9 @@ namespace ddb
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("🐳 Docker Database Backup is now starting!");
+            Console.WriteLine("==============================================");
+            Console.WriteLine("==🐳 Docker Database Backup is now starting!==");
+            Console.WriteLine("==============================================");
 
             Stopwatch stopwatch = new Stopwatch();
             EVariables eVariables = new EVariables();
@@ -37,29 +39,29 @@ namespace ddb
                 firstRunDelay = HelperClass.GetMilisecund(DB_DUMP_BEGIN_HOUR, DB_DUMP_BEGIN_MINUTE);
             }
 
-            Console.WriteLine($"MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}{Environment.NewLine}MYSQL_DB_NAMES: {eVariables.MYSQL_DB_NAMES}");
+            Console.WriteLine($"Your options:{Environment.NewLine}MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (***)🔐{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}{Environment.NewLine}MYSQL_DB_NAMES: {eVariables.MYSQL_DB_NAMES}{Environment.NewLine}TZ: {eVariables.TZ}");
 
             command.Append("mysqldump");
             try
             {
                 if (command.Bash().Contains("command not found"))
                 {
-                    Console.WriteLine("[ERROR] 🤔 There is no mysqldump in system");
+                    Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 There is no mysqldump in system");
                     return;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] 🤔 While searching for mysqldump: {ex.Message} | {ex.InnerException?.Message}");
+                Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 While searching for mysqldump: {ex.Message} | {ex.InnerException?.Message}");
                 return;
             }
-            Console.WriteLine($"[INFO] Your container current Date time is: {DateTime.Now}");
+            Console.WriteLine($"[{DateTime.Now}][INFO] Your container current Date time is: {DateTime.Now} Timezone: {eVariables.TZ}");
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (firstRunDelay > 0)
                 {
-                    Console.WriteLine($"[INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(firstRunDelay)}");
+                    Console.WriteLine($"[{DateTime.Now}][INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(firstRunDelay)}");
                     await Task.Delay(firstRunDelay, stoppingToken);
                     firstRunDelay = -1;
                 }
@@ -70,10 +72,10 @@ namespace ddb
                     if (nextStartMilliseconds < 0)
                     {
                         nextStartMilliseconds = 0;
-                        Console.WriteLine("[WARNING] ⌛ Your backup has been taking longer than the set value of DB_DUMP_FREQ. Next will be executed immediately");
+                        Console.WriteLine($"[{DateTime.Now}][WARNING] ⌛ Your backup has been taking longer than the set value of DB_DUMP_FREQ. Next will be executed immediately");
                     }
 
-                    Console.WriteLine($"[INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(nextStartMilliseconds)}");
+                    Console.WriteLine($"[{DateTime.Now}][INFO] ⏱ Next backup is set to: {DateTime.Now.AddMilliseconds(nextStartMilliseconds)}");
                     await Task.Delay(nextStartMilliseconds, stoppingToken);
                 }
 
@@ -89,23 +91,22 @@ namespace ddb
 
                 try
                 {
-                    Console.WriteLine("[INFO] 🐱‍👤 Start making backup...");
+                    Console.WriteLine($"[{DateTime.Now}][INFO] 🐱‍👤 Start making backup...");
                     Console.WriteLine(command.Bash());
                     stopwatch.Stop();
                     if (File.Exists($"/app/backup/{filename}.sql.gz"))
                     {
-                        Console.WriteLine($"[INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz ({stopwatch.Elapsed.ToString("hh\\:mm\\:ss")})");
+                        Console.WriteLine($"[{DateTime.Now}][INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz ({stopwatch.Elapsed.ToString("hh\\:mm\\:ss")})");
                     }
                     else
                     {
-                        Console.WriteLine($"[ERROR] 🤔 Something went wrong. File not found.");
+                        Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Something went wrong. File not found.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[ERROR] 🤔 While making backup: {ex.Message} | {ex.InnerException?.Message}");
+                    Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 While making backup: {ex.Message} | {ex.InnerException?.Message}");
                     stopwatch.Stop();
-
                 }
             }
         }
