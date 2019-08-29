@@ -18,20 +18,19 @@ namespace ddb
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = "/bin/bash",
+                        FileName = "/bin/sh",
                         Arguments = $"-c \"{cmd.Replace("\"", "\\\"")}\"",
-                        RedirectStandardOutput = true,
+                        RedirectStandardOutput = false,
                         RedirectStandardError = true,
                         UseShellExecute = false,
                         CreateNoWindow = true
                     }
                 };
                 process.Start();
-                string standardOutput = process.StandardOutput.ReadToEnd();
                 string standardError = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
-                return String.IsNullOrEmpty(standardOutput) ? standardError : standardOutput;
+                return standardError;
             }
             catch (Exception)
             {
