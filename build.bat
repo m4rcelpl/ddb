@@ -4,7 +4,7 @@ docker push m4rcel/ddb:1
 docker push m4rcel/ddb:1.1
 docker push m4rcel/ddb:latest
 
-docker build -f .\Dockerfile.arm -t m4rcel/ddb:arm7 -t m4rcel/ddb:1-arm7 -t m4rcel/ddb:1.1-arm7 .
+docker build --no-cache -f Dockerfile.arm -t m4rcel/ddb:arm7 -t m4rcel/ddb:1-arm7 -t m4rcel/ddb:1.1-arm7 .
 docker push m4rcel/ddb:arm7
 docker push m4rcel/ddb:1-arm7
 docker push m4rcel/ddb:1.1-arm7
