@@ -9,6 +9,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
+ENV DEBIAN_FRONTEND 'readline'
+
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-disco AS build
 #RUN git clone https://github.com/m4rcelpl/ddb.git /src
 WORKDIR /src
