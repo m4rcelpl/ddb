@@ -2,6 +2,10 @@
 DDB is simple tool to create backup (dump) of MySQL and MariaDB written in .NET Core 3. There is a version for the AMD64 and the ARM7 (tested on Raspberry PI 4).<br>
 **Project now is in Beta**
 
+# Supported tags and respective `Dockerfile` links
+* AMD64: [`latest`](https://github.com/m4rcelpl/ddb/blob/master/Dockerfile), [`1.1`](https://github.com/m4rcelpl/ddb/blob/master/Dockerfile), [`1`](https://github.com/m4rcelpl/ddb/blob/master/Dockerfile)<br>
+* ARM7: [`arm7`](https://github.com/m4rcelpl/ddb/blob/master/Dockerfile.arm), [`1.1-arm7`](https://github.com/m4rcelpl/ddb/blob/master/Dockerfile.arm), [`1-arm7`](https://github.com/m4rcelpl/ddb/blob/master/Dockerfile.arm)
+
 # 💻How to use
 ### Docker:<br>
 ```
