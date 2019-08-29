@@ -1,6 +1,5 @@
 FROM mcr.microsoft.com/dotnet/core/runtime-deps:3.0-disco-arm32v7 AS base 
 ENV TZ 'UTC'
-ENV TZ 'UTC'
 RUN apt-get update \
     && apt-get -y upgrade \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
