@@ -14,6 +14,7 @@ namespace ddb
             DB_DUMP_FREQ = Environment.GetEnvironmentVariable("DB_DUMP_FREQ") ?? "1440";
             DB_DUMP_BEGIN = Environment.GetEnvironmentVariable("DB_DUMP_BEGIN") ?? "";
             MYSQL_DB_NAMES = Environment.GetEnvironmentVariable("MYSQL_DB_NAMES") ?? "";
+            FILES_TO_KEEP = Environment.GetEnvironmentVariable("FILES_TO_KEEP") ?? "";
             TZ = Environment.GetEnvironmentVariable("TZ") ?? "";
         }
 
@@ -24,6 +25,7 @@ namespace ddb
         public string MYSQL_DB_NAMES { get; set; }
         public string DB_DUMP_FREQ { get; set; }
         public string DB_DUMP_BEGIN { get; set; }
+        public string FILES_TO_KEEP { get; set; }
         public string TZ { get; set; }
     }
 }
