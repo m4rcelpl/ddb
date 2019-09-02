@@ -96,7 +96,9 @@ namespace ddb
                     stopwatch.Stop();
                     if (File.Exists($"/app/backup/{filename}.sql.gz"))
                     {
-                        Console.WriteLine($"[{DateTime.Now}][INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz ({stopwatch.Elapsed.ToString("hh\\:mm\\:ss")})");
+                        FileInfo fileInfo = new FileInfo($"/app/backup/{filename}.sql.gz");
+
+                        Console.WriteLine($"[{DateTime.Now}][INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz (creation time:{stopwatch.Elapsed.ToString("hh\\:mm\\:ss")} size:{fileInfo.Length.BytesToString()})");
                     }
                     else
                     {
