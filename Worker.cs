@@ -21,8 +21,11 @@ namespace ddb
             EVariables eVariables = new EVariables();
             StringBuilder filename = new StringBuilder();
             StringBuilder command = new StringBuilder();
-            FileInfo fileInfo;
-            long filesize = 0;
+            DirectoryInfo dir = new DirectoryInfo("/app/backup/");
+
+            long allFilesize = 0;
+            long? lastFilesize = 0;
+
             int filecount = 0;
             int firstRunDelay = -1;
 
@@ -85,7 +88,7 @@ namespace ddb
 
                 stopwatch.Restart();
                 filename.Clear();
-                filename.Append(DateTime.Now.ToString("ddMMyyyy_HHmmss"));
+                filename.Append(DateTime.Now.ToString("yyyyMMddHHmmss"));
                 command.Clear();
 
                 if (string.IsNullOrEmpty(eVariables.MYSQL_DB_NAMES))
@@ -103,25 +106,49 @@ namespace ddb
                 {
                     Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 While making backup: {ex.Message} | {ex.InnerException?.Message}");
                     stopwatch.Stop();
+                    continue;
                 }
 
                 if (File.Exists($"/app/backup/{filename}.sql.gz"))
                 {
-                    filesize = 0;
+                    allFilesize = 0;
+                    lastFilesize = 0;
                     filecount = 0;
 
-                    fileInfo = new FileInfo($"/app/backup/{filename}.sql.gz");
-                    filecount = Directory.GetFiles("/app/backup/", "*.gz").Length;
-                    filesize = Directory.GetFiles("/app/backup/", "*.gz", SearchOption.AllDirectories).Sum(file => file.Length);
+                    try
+                    {
+                        FileInfo[] files = dir.GetFiles("*.gz");
+                        lastFilesize = files.FirstOrDefault(s => s.Name == $"{filename}.sql.gz")?.Length;
+                        allFilesize = files.Sum(f => f.Length);
+                        filecount = files.Length;
 
-                    Console.WriteLine($"[{DateTime.Now}][INFO] 💾 Files is save in: /app/backup/{filename}.sql.gz (duration: {stopwatch.Elapsed.ToString("hh\\:mm\\:ss")} size: {fileInfo.Length.BytesToString()})");
-                    Console.WriteLine($"[{DateTime.Now}][INFO] 📦 Now you have {filecount} file (*.gz) with a total size of {filesize}");
+                        if (eVariables.FILES_TO_KEEP != 0 && filecount > eVariables.FILES_TO_KEEP)
+                        {
+                            foreach (var item in files.OrderBy(p => p.CreationTime).Take(filecount - eVariables.FILES_TO_KEEP))
+                            {
+                                File.Delete(item.FullName);
+                                Console.WriteLine($"[{DateTime.Now}][INFO] 🔥 Delete oldest file: {item.Name}");
+                            }
+
+                            files = dir.GetFiles("*.gz");
+                            lastFilesize = files.FirstOrDefault(s => s.Name == $"{filename}.sql.gz")?.Length;
+                            allFilesize = files.Sum(f => f.Length);
+                            filecount = files.Length;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Something went wrong while checking file size or delete: {ex.Message} | {ex.InnerException?.Message}");
+                    }
+
+                    Console.WriteLine($"[{DateTime.Now}][INFO] 💾 New files is save in: /app/backup/{filename}.sql.gz (duration: {stopwatch.Elapsed.ToString("hh\\:mm\\:ss")} size: {lastFilesize?.BytesToString()})");
+                    Console.WriteLine($"[{DateTime.Now}][INFO] 📦 Now you have {filecount} file (*.gz) with a total size of {allFilesize.BytesToString()}");
+
                 }
                 else
                 {
                     Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Something went wrong. File not found.");
                 }
-
             }
         }
     }
