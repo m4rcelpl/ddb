@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace ddb
 {
@@ -48,20 +49,18 @@ namespace ddb
 
             Console.WriteLine($"Your options:{Environment.NewLine}MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (****)🔐 [Length:{eVariables.MYSQL_PASSWORD.Length}]{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}{Environment.NewLine}MYSQL_DB_NAMES: {eVariables.MYSQL_DB_NAMES}{Environment.NewLine}FILES_TO_KEEP: {eVariables.FILES_TO_KEEP}{Environment.NewLine}TZ: {eVariables.TZ}");
 
-            command.Append("mysqldump");
+            //Check database connection
+            command.Append($"mysql -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD}");
             try
             {
-                if (command.Bash().Contains("command not found"))
-                {
-                    Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 There is no mysqldump in system");
-                    return;
-                }
+                command.Bash();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 While searching for mysqldump: {ex.Message} | {ex.InnerException?.Message}");
-                return;
+                Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Can't connect to database: {ex.Message} | {ex.InnerException?.Message}");
+                throw ex;
             }
+
             Console.WriteLine($"[{DateTime.Now}][INFO] Your container current Date time is: {DateTime.Now} Timezone: {eVariables.TZ}");
 
             while (!stoppingToken.IsCancellationRequested)
@@ -98,15 +97,25 @@ namespace ddb
 
                 try
                 {
+                    Console.WriteLine("");
                     Console.WriteLine($"[{DateTime.Now}][INFO] 🐱‍👤 Start making backup...");
-                    Console.WriteLine(command.Bash());
-                    stopwatch.Stop();
+
+                    command.Bash();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 While making backup: {ex.Message} | {ex.InnerException?.Message}");
-                    stopwatch.Stop();
+                    Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Ups! We have problem while making backup: {ex.Message} | {ex.InnerException?.Message}");
+
+                    if (File.Exists($"/app/backup/{filename}.sql.gz"))
+                    {
+                        File.Delete($"/app/backup/{filename}.sql.gz");
+                    }
+
                     continue;
+                }
+                finally
+                {
+                    stopwatch.Stop();
                 }
 
                 if (File.Exists($"/app/backup/{filename}.sql.gz"))

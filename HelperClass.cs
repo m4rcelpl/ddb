@@ -10,7 +10,7 @@ namespace ddb
     /// </summary>
     public static class HelperClass
     {
-        public static string Bash(this StringBuilder cmd)
+        public static bool Bash(this StringBuilder cmd)
         {
             try
             {
@@ -30,7 +30,14 @@ namespace ddb
                 string standardError = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
-                return standardError;
+                if (string.IsNullOrEmpty(standardError.Trim()))
+                {
+                    return true;
+                }
+                else
+                {
+                    throw new Exception(standardError);
+                }
             }
             catch (Exception)
             {

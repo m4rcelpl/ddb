@@ -1,4 +1,4 @@
-docker buildx build -f .\Dockerfile -t m4rcel/ddb -t m4rcel/ddb:1 -t m4rcel/ddb:1.1 -t m4rcel/ddb:latest .
+docker buildx build -f -pull .\Dockerfile -t m4rcel/ddb -t m4rcel/ddb:1 -t m4rcel/ddb:1.1 -t m4rcel/ddb:latest .
 docker push m4rcel/ddb
 docker push m4rcel/ddb:1
 docker push m4rcel/ddb:1.1
