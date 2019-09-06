@@ -29,10 +29,6 @@ namespace ddb
             int filecount = 0;
             int firstRunDelay = -1;
 
-            Int32.TryParse(eVariables.DB_DUMP_FREQ, out int DB_DUMP_FREQ);
-            if (DB_DUMP_FREQ <= 0)
-                DB_DUMP_FREQ = 1;
-
             if (eVariables.DB_DUMP_BEGIN.Length == 4)
             {
                 Int32.TryParse(eVariables.DB_DUMP_BEGIN.Substring(0, 2), out int DB_DUMP_BEGIN_HOUR);
@@ -75,7 +71,7 @@ namespace ddb
                 }
                 else
                 {
-                    int nextStartMilliseconds = (DB_DUMP_FREQ * 60000) - Convert.ToInt32(stopwatch.ElapsedMilliseconds);
+                    int nextStartMilliseconds = (eVariables.DB_DUMP_FREQ * 60000) - Convert.ToInt32(stopwatch.ElapsedMilliseconds);
 
                     if (nextStartMilliseconds < 0)
                     {
