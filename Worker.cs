@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Hosting.Internal;
 
 namespace ddb
 {
@@ -57,7 +56,7 @@ namespace ddb
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Can't connect to database: {ex.Message} | {ex.InnerException?.Message}");
+                Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Can't connect to database: {ex.Message}");
                 throw ex;
             }
 
@@ -104,7 +103,7 @@ namespace ddb
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Ups! We have problem while making backup: {ex.Message} | {ex.InnerException?.Message}");
+                    Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Ups! We have problem while making backup: {ex.Message}");
 
                     if (File.Exists($"/app/backup/{filename}.sql.gz"))
                     {
@@ -147,7 +146,7 @@ namespace ddb
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Something went wrong while checking file size or delete: {ex.Message} | {ex.InnerException?.Message}");
+                        Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Something went wrong while checking file size or delete: {ex.Message}");
                     }
 
                     Console.WriteLine($"[{DateTime.Now}][INFO] 💾 New files is save in: /app/backup/{filename}.sql.gz (duration: {stopwatch.Elapsed.ToString("hh\\:mm\\:ss")} size: {lastFilesize?.BytesToString()})");
