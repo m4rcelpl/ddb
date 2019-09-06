@@ -50,16 +50,19 @@ namespace ddb
 
             //Check database connection
             command.Append($"mysql -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD}");
+
+            Console.WriteLine($"[{DateTime.Now}][INFO] 👩‍💻 Checking database connection...");
+
             try
             {
                 command.Bash();
+                Console.WriteLine($"[{DateTime.Now}][INFO] 🙆‍ Hurray, database is reachable");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Can't connect to database: {ex.Message}");
-                throw ex;
+                Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Can't connect to database, consider checking options and restart: {ex.Message}");
             }
-
+            Console.WriteLine();
             Console.WriteLine($"[{DateTime.Now}][INFO] Your container current Date time is: {DateTime.Now} Timezone: {eVariables.TZ}");
 
             while (!stoppingToken.IsCancellationRequested)
@@ -135,7 +138,7 @@ namespace ddb
                             foreach (var item in files.OrderBy(p => p.CreationTime).Take(filecount - eVariables.FILES_TO_KEEP))
                             {
                                 File.Delete(item.FullName);
-                                Console.WriteLine($"[{DateTime.Now}][INFO] 🔥 Delete oldest file: {item.Name}");
+                                Console.WriteLine($"[{DateTime.Now}][INFO] 🔥 File limit reached. Delete oldest file: {item.Name}");
                             }
 
                             files = dir.GetFiles("*.gz");
