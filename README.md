@@ -41,8 +41,9 @@ services:
 `MYSQL_PORT`: Port, default is 3306.<br>
 `MYSQL_USERNAME`: Database username.<br>
 `MYSQL_PASSWORD`: Database password.<br>
+`MYSQL_DB_NAMES`: Names of the databases you want to make a backup. Separated by spaces E.g. 'database1 database2 database3'. By default this is set to `--all-databases`.<br>
+`MYSQL_EXTRA_OPTION`: You can add any available options from [here](https://mariadb.com/kb/en/library/mysqldump/).<br>
 `DB_DUMP_FREQ`: Frequency of backups (in minutes). Default is 1440 (24h) <br>
 `DB_DUMP_BEGIN`: Time of the backup. E.g. 1337 means 13:37 (1:37 PM). Remember to check the timezone of your container. DDB displays your current timezone when you launch it.<br>
-`MYSQL_DB_NAMES`: Names of the databases you want to make a backup. Separated by spaces E.g. 'database1 database2 database3'. By default this is set to `--all-databases`.
 `TZ`: You can set conteiner [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). E.g. 'Europe/Warsaw'. Default setting is 'UTC'.<br>
 `FILES_TO_KEEP`: How many backup files you want to keep. If limit is reached the oldest one are deleted.
