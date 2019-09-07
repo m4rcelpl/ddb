@@ -20,7 +20,7 @@ namespace ddb
                     {
                         FileName = "/bin/sh",
                         Arguments = $"-c \"{cmd.Replace("\"", "\\\"")}\"",
-                        RedirectStandardOutput = false,
+                        RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -47,7 +47,7 @@ namespace ddb
 
         public static String BytesToString(this long byteCount)
         {
-            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
             if (byteCount == 0)
                 return "0" + suf[0];
             long bytes = Math.Abs(byteCount);
