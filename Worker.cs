@@ -42,7 +42,17 @@ namespace ddb
                 firstRunDelay = HelperClass.GetMilisecund(DB_DUMP_BEGIN_HOUR, DB_DUMP_BEGIN_MINUTE);
             }
 
-            Console.WriteLine($"Your options:{Environment.NewLine}MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}{Environment.NewLine}MYSQL_PASSWORD: (****)🔐 [Length:{eVariables.MYSQL_PASSWORD.Length}]{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}{Environment.NewLine}MYSQL_DB_NAMES: {eVariables.MYSQL_DB_NAMES}{Environment.NewLine}FILES_TO_KEEP: {eVariables.FILES_TO_KEEP}{Environment.NewLine}TZ: {eVariables.TZ}");
+            Console.WriteLine($"Your options:" +
+                $"{Environment.NewLine}MYSQL_ADRESS: {eVariables.MYSQL_ADRESS}" +
+                $"{Environment.NewLine}MYSQL_PORT: {eVariables.MYSQL_PORT}" +
+                $"{Environment.NewLine}MYSQL_USERNAME: {eVariables.MYSQL_USERNAME}" +
+                $"{Environment.NewLine}MYSQL_PASSWORD: (****)🔐 [Length:{eVariables.MYSQL_PASSWORD.Length}]" +
+                $"{Environment.NewLine}MYSQL_DB_NAMES: {eVariables.MYSQL_DB_NAMES}" +
+                $"{Environment.NewLine}MYSQL_EXTRA_OPTION: {eVariables.MYSQL_EXTRA_OPTION}" +
+                $"{Environment.NewLine}DB_DUMP_BEGIN: {eVariables.DB_DUMP_BEGIN}" +
+                $"{Environment.NewLine}DB_DUMP_FREQ: {eVariables.DB_DUMP_FREQ}" +
+                $"{Environment.NewLine}FILES_TO_KEEP: {eVariables.FILES_TO_KEEP}" +
+                $"{Environment.NewLine}TZ: {eVariables.TZ}");
 
             //Check database connection
             command.Append($"mysql -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD}");
@@ -89,9 +99,9 @@ namespace ddb
                 command.Clear();
 
                 if (string.IsNullOrEmpty(eVariables.MYSQL_DB_NAMES))
-                    command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --skip-lock-tables --all-databases | gzip -9 -c > /app/backup/{filename}.sql.gz");
+                    command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} {eVariables.MYSQL_EXTRA_OPTION} --all-databases | gzip -9 -c > /app/backup/{filename}.sql.gz");
                 else
-                    command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} --skip-lock-tables --databases {eVariables.MYSQL_DB_NAMES} | gzip -9 -c > /app/backup/{filename}.sql.gz");
+                    command.Append($"mysqldump -h{eVariables.MYSQL_ADRESS} -P{eVariables.MYSQL_PORT} -u{eVariables.MYSQL_USERNAME} -p{eVariables.MYSQL_PASSWORD} {eVariables.MYSQL_EXTRA_OPTION} --databases {eVariables.MYSQL_DB_NAMES} | gzip -9 -c > /app/backup/{filename}.sql.gz");
 
                 try
                 {
@@ -129,6 +139,8 @@ namespace ddb
                         allFilesize = files.Sum(f => f.Length);
                         filecount = files.Length;
 
+                        Console.WriteLine($"[{DateTime.Now}][INFO] 💾 New files is save in: /app/backup/{filename}.sql.gz (duration: {stopwatch.Elapsed.ToString("hh\\:mm\\:ss")} size: {lastFilesize?.BytesToString()})");
+
                         if (eVariables.FILES_TO_KEEP != 0 && filecount > eVariables.FILES_TO_KEEP)
                         {
                             foreach (var item in files.OrderBy(p => p.CreationTime).Take(filecount - eVariables.FILES_TO_KEEP))
@@ -148,9 +160,7 @@ namespace ddb
                         Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Something went wrong while checking file size or delete: {ex.Message}");
                     }
 
-                    Console.WriteLine($"[{DateTime.Now}][INFO] 💾 New files is save in: /app/backup/{filename}.sql.gz (duration: {stopwatch.Elapsed.ToString("hh\\:mm\\:ss")} size: {lastFilesize?.BytesToString()})");
                     Console.WriteLine($"[{DateTime.Now}][INFO] 📦 Now you have {filecount} file (*.gz) with a total size of {allFilesize.BytesToString()}");
-
                 }
                 else
                 {

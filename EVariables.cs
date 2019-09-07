@@ -13,6 +13,7 @@ namespace ddb
             MYSQL_PASSWORD = Environment.GetEnvironmentVariable("MYSQL_PASSWORD") ?? "";
             MYSQL_DB_NAMES = Environment.GetEnvironmentVariable("MYSQL_DB_NAMES") ?? "";
             DB_DUMP_BEGIN = Environment.GetEnvironmentVariable("DB_DUMP_BEGIN") ?? "";
+            MYSQL_EXTRA_OPTION = Environment.GetEnvironmentVariable("MYSQL_EXTRA_OPTION") ?? "";
 
             if (Int32.TryParse(Environment.GetEnvironmentVariable("DB_DUMP_FREQ") ?? "", out int db_dump_freq))
                 DB_DUMP_FREQ = db_dump_freq;
@@ -32,6 +33,7 @@ namespace ddb
         public string MYSQL_USERNAME { get; set; }
         public string MYSQL_PASSWORD { get; set; }
         public string MYSQL_DB_NAMES { get; set; }
+        public string MYSQL_EXTRA_OPTION { get; set; }
         public int DB_DUMP_FREQ { get; set; }
         public string DB_DUMP_BEGIN { get; set; }
         public int FILES_TO_KEEP { get; set; }
