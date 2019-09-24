@@ -14,7 +14,7 @@ namespace ddb
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("==============================================");
-            Console.WriteLine("==🐳 Docker Database Backup is now starting!==");
+            Console.WriteLine("==🐳 Docker Database Backup is now starting==");
             Console.WriteLine("==============================================");
 
             Stopwatch stopwatch = new Stopwatch();
@@ -69,7 +69,7 @@ namespace ddb
                 Console.WriteLine($"[{DateTime.Now}][ERROR] 🤔 Can't connect to database, consider checking options and restart: {ex.Message}");
             }
             Console.WriteLine();
-            Console.WriteLine($"[{DateTime.Now}][INFO] Your container current Date time is: {DateTime.Now} Timezone: {eVariables.TZ}");
+            Console.WriteLine($"[{DateTime.Now}][INFO] 📅 Your container current Date time is: {DateTime.Now} Timezone: {eVariables.TZ}");
 
             while (!stoppingToken.IsCancellationRequested)
             {
