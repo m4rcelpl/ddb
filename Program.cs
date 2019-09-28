@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+
 namespace ddb
 {
     public class Program
@@ -11,7 +12,7 @@ namespace ddb
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+            Host.CreateDefaultBuilder(args).UseSystemd()
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
