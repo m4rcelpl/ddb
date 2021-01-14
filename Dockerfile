@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/runtime-deps:3.0-disco AS base 
+FROM mcr.microsoft.com/dotnet/core/runtime-deps:3.1-focal AS base 
 ENV TZ 'UTC'
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -8,7 +8,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-disco AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-focal AS build
 #RUN git clone https://github.com/m4rcelpl/ddb.git /src
 WORKDIR /src
 COPY . .
